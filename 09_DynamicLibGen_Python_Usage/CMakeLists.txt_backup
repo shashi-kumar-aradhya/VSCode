@@ -1,0 +1,57 @@
+# Minimum CMake version required
+cmake_minimum_required(VERSION 3.12)
+
+if(WIN32)
+    # Set the C compiler to GCC (if using MinGW or another GCC-based toolchain)
+    set(CMAKE_C_COMPILER "C:/path/to/gcc.exe")
+
+    # Set the C++ compiler to G++ (for MinGW or similar GCC-based toolchains)
+    set(CMAKE_CXX_COMPILER "C:/path/to/g++.exe")
+
+    message(DEBUG "This is a debug message for Windows")
+elseif(APPLE)
+    # Set the C compiler to Clang
+    set(CMAKE_C_COMPILER "/usr/bin/clang")
+
+    # Set the C++ compiler to Clang++
+    set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
+
+    message(DEBUG "This is a debug message for macOS")
+else()
+    # Set the C compiler to GCC (for Linux or other Unix-like systems)
+    set(CMAKE_C_COMPILER "/usr/bin/gcc")
+
+    # Set the C++ compiler to G++ (for Linux or other Unix-like systems)
+    set(CMAKE_CXX_COMPILER "/usr/bin/g++")
+
+    message(DEBUG "This is a debug message for Linux/Unix")
+endif()
+
+# Project name
+project(CythonCppExample)
+
+# Set Python executable path (optional, might be auto-detected)
+find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
+
+# Find Cython package
+find_package(Cython REQUIRED)
+
+# Set C++ flags (optional, for optimization)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
+# Add the source directory
+set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+
+# Include directories (if needed)
+include_directories(${SOURCE_DIR})
+
+# Compile the Cython file into a shared object file
+cython_add_module(math_functions MODULE math_functions.pyx)
+
+# Link the C++ library to the Cython extension
+target_link_libraries(math_functions PRIVATE ${SOURCE_DIR}/math_functions.cpp)
+
+# If needed, set the Python include and library paths explicitly:
+# include_directories(${Python3_INCLUDE_DIRS})
+# target_link_libraries(math_functions PRIVATE ${Python3_LIBRARIES})
+
